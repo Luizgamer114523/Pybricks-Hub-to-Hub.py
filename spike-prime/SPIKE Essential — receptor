@@ -1,0 +1,31 @@
+from pybricks.hubs import EssentialHub
+from pybricks.parameters import Color
+from pybricks.tools import wait
+
+# Recebe no canal 1 e responde pelo canal 2.
+hub = EssentialHub(
+    broadcast_channel=2,
+    observe_channels=[1]
+)
+
+ultimo_comando = None
+
+while True:
+    comando = hub.ble.observe(1)
+
+    if comando is not None and comando != ultimo_comando:
+        print("Comando recebido:", comando)
+        ultimo_comando = comando
+
+        if comando == "START":
+            hub.light.on(Color.GREEN)
+            hub.ble.broadcast("ACK_START")
+
+        elif comando == "STOP":
+            hub.light.on(Color.RED)
+            hub.ble.broadcast("ACK_STOP")
+
+        elif comando == "PING":
+            hub.ble.broadcast("PONG")
+
+    wait(100)
