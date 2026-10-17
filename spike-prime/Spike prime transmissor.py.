@@ -1,0 +1,27 @@
+from pybricks.hubs import PrimeHub
+from pybricks.parameters import Color
+from pybricks.tools import wait
+
+# Canal 1 envia comandos; canal 2 recebe respostas.
+hub = PrimeHub(
+    broadcast_channel=1,
+    observe_channels=[2]
+)
+
+comandos = ["START", "PING", "STOP"]
+indice = 0
+
+while True:
+    comando = comandos[indice]
+
+    hub.ble.broadcast(comando)
+    hub.light.on(Color.GREEN)
+
+    print("Enviado:", comando)
+
+    resposta = hub.ble.observe(2)
+    if resposta is not None:
+        print("Resposta recebida:", resposta)
+
+    indice = (indice + 1) % len(comandos)
+    wait(1000)
